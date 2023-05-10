@@ -1,8 +1,7 @@
 from fastapi.routing import APIRouter
-from fastapi.staticfiles import StaticFiles
 from ipatool_comm.models import IPAToolAppSearch
 import ipatool_comm
-from constants.directories import DECRYPTED_IPA_DIR
+
 
 ipa_router = APIRouter()
 
@@ -17,10 +16,3 @@ def _search_ipa(query: str) -> IPAToolAppSearch:
 def _download_ipa(bundle_id: str) -> dict:
     """Download an IPA from the App Store"""
     return {"has_downloaded": ipatool_comm.download_ipa(bundle_id)}
-
-
-ipa_router.mount(
-    "/decrypted_ipa",
-    StaticFiles(directory=DECRYPTED_IPA_DIR),
-    name="decrypted_ipa",
-)
