@@ -17,5 +17,5 @@ def _get_library() -> Iterable[PlayCoverIPALibraryFormat]:
             name=row[2],
             version=row[3],
             itunesLookup=f"https://itunes.apple.com/lookup?bundleId={row[1]}",
-            link=f"http://localhost:8000/ipa/download?bundle_id={row[1]}",
+            link=f"http://localhost:8000/decrypted_ipa/{row[1]}.ipa",
         )
