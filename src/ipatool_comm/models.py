@@ -3,7 +3,7 @@ import pydantic
 
 class IPAToolAppInfo(pydantic.BaseModel):
     id: str
-    bundle_id: str
+    bundleID: str
     name: str
     price: str
     version: str
