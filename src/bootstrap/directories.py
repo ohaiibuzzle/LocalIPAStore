@@ -1,5 +1,10 @@
 import os
-from constants.directories import WORK_DIR, TOOLS_DIR, IPA_DIR
+from constants.directories import (
+    WORK_DIR,
+    TOOLS_DIR,
+    IPA_DIR,
+    DECRYPTED_IPA_DIR,
+)
 
 
 def bootstrap_directories():
@@ -8,6 +13,7 @@ def bootstrap_directories():
         WORK_DIR,
         TOOLS_DIR,
         IPA_DIR,
+        DECRYPTED_IPA_DIR,
     ]:
         os.makedirs(directory, exist_ok=True)
     # Create the directories within the runtime

@@ -12,6 +12,6 @@ def _search_ipa(query: str) -> IPAToolAppSearch:
 
 
 @_ipa_router.get("/ipa/download")
-def _download_ipa(bundle_id: str) -> str:
+def _download_ipa(bundle_id: str) -> dict:
     """Download an IPA from the App Store"""
-    return ipatool_comm.download_ipa(bundle_id)
+    return {"has_downloaded": ipatool_comm.download_ipa(bundle_id)}

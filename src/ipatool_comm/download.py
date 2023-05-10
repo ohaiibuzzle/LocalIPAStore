@@ -9,7 +9,7 @@ import json
 def _get_itunes_info(bundle_id: str) -> dict:
     """Get iTunes info for an app"""
     with urllib.request.urlopen(
-        f"https://itunes.apple.com/lookup?bundleId={bundle_id}"
+        f"https://itunes.apple.com/lookup?bundleId={bundle_id}&country=jp"
     ) as response:
         return json.loads(response.read())["results"][0]
 
@@ -33,6 +33,7 @@ def download_ipa(bundle_id: str) -> bool:
     if run.returncode == 0:
         itunes_lookup = _get_itunes_info(bundle_id)
         _add_ipa_to_library(
+            itunes_lookup["trackId"],
             bundle_id,
             itunes_lookup["trackName"],
             itunes_lookup["version"],
@@ -41,4 +42,4 @@ def download_ipa(bundle_id: str) -> bool:
 
         return True
     else:
-        return False
+        raise Exception("Failed to download IPA")

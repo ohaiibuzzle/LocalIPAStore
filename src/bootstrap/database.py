@@ -7,13 +7,24 @@ def _initialize_database():
     ipa_table_query = """
     CREATE TABLE IF NOT EXISTS IPALibrary (
         id INTEGER PRIMARY KEY,
-        bundle_id TEXT NOT NULL,
+        bundle_id TEXT NOT NULL UNIQUE,
         name TEXT NOT NULL,
         version TEXT NOT NULL,
         ipa_path TEXT NOT NULL
         );
     """
-    SqliteSingleton().execute(ipa_table_query)
+    decrypted_ipa_table_query = """
+    CREATE TABLE IF NOT EXISTS DecryptedIPALibrary (
+        id INTEGER PRIMARY KEY,
+        bundle_id TEXT NOT NULL UNIQUE,
+        name TEXT NOT NULL,
+        version TEXT NOT NULL,
+        decrypted_ipa_path TEXT NOT NULL
+        );
+    """
+
+    SqliteSingleton.getInstance().execute(ipa_table_query)
+    SqliteSingleton.getInstance().execute(decrypted_ipa_table_query)
 
 
 def bootstrap_database():

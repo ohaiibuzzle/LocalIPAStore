@@ -1,5 +1,9 @@
 import bootstrap
-import ipatool_comm
+import api_server
+from fastapi import FastAPI
+import uvicorn
+
+TEST_APP = "net.openvpn.connect.app"
 
 
 def checks():
@@ -10,14 +14,15 @@ def checks():
 
 
 def start_fastapi_server():
-    # TODO: Add FastAPI server
+    app = FastAPI()
+    app.include_router(api_server.api_router)
+    uvicorn.run(app, host="localhost", port=8000)
     pass
 
 
 def main():
     checks()
     start_fastapi_server()
-    ipatool_comm.download_ipa("net.openvpn.connect.app")
 
 
 if __name__ == "__main__":

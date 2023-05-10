@@ -20,8 +20,6 @@ def check_device_pair() -> bool:
     run = subprocess.run(
         [
             "idevicepair",
-            "-u",
-            "auto",
             "validate",
         ]
     )

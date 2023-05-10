@@ -2,7 +2,7 @@ import subprocess
 from .semaphore import InstallSemaphore
 
 
-def _install_ipa(path: str) -> bool:
+def install_ipa(path: str) -> bool:
     """Install an IPA to the device"""
     InstallSemaphore.acquire()
     run = subprocess.run(
@@ -16,10 +16,10 @@ def _install_ipa(path: str) -> bool:
     if run.returncode == 0:
         return True
     else:
-        return False
+        raise Exception(f"Failed to install IPA: {run.stderr.decode()}")
 
 
-def _uninstall_ipa(bundle_id: str) -> bool:
+def uninstall_ipa(bundle_id: str) -> bool:
     """Uninstall an IPA from the device"""
     InstallSemaphore.acquire()
     run = subprocess.run(
@@ -33,4 +33,4 @@ def _uninstall_ipa(bundle_id: str) -> bool:
     if run.returncode == 0:
         return True
     else:
-        return False
+        raise Exception(f"Failed to uninstall IPA: {run.stderr.decode()}")
