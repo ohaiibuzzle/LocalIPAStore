@@ -166,7 +166,7 @@ function swap32(value) {
         rs += value.charAt(value.length - i - 2);
         rs += value.charAt(value.length - i - 1);
     }
-    return parseInt(result, 16)
+    return parseInt(rs, 16)
 }
 
 function dumpModule(name) {
