@@ -24,6 +24,7 @@ from database import SqliteSingleton
 from ipatool_comm import download_ipa
 from constants.directories import IPA_DIR, DECRYPTED_IPA_DIR
 from libimobiledevice_comm import install_ipa, uninstall_ipa
+from api_server.status_router import TASKS
 
 script_dir = os.path.dirname(os.path.realpath(__file__))
 
@@ -440,6 +441,8 @@ def run_ipa_decrypt(
     blacklisted_dirs: list[str] = [],
     ssh_params: SSHConnection = SSHConnection(),
 ):
+    TASKS.append("Decrypting {}".format(bundle_id))
+
     q1 = """
     SELECT * FROM IPALibrary WHERE bundle_id = ?;
     """
@@ -479,3 +482,5 @@ def run_ipa_decrypt(
             output_ipa,
         ),
     )
+
+    TASKS.remove("Decrypting {}".format(bundle_id))

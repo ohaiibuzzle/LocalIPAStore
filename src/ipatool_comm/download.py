@@ -1,5 +1,6 @@
 from constants.directories import TOOLS_DIR, IPA_DIR
 from .database import _add_ipa_to_library
+from api_server.status_router import TASKS
 
 import subprocess
 import urllib.request
@@ -16,6 +17,7 @@ def _get_itunes_info(bundle_id: str) -> dict:
 
 def download_ipa(bundle_id: str) -> bool:
     """Download an IPA from the App Store"""
+    TASKS.append(f"Downloading {bundle_id}")
 
     run = subprocess.run(
         [
@@ -30,6 +32,8 @@ def download_ipa(bundle_id: str) -> bool:
             "json",
         ]
     )
+    TASKS.remove(f"Downloading {bundle_id}")
+
     if run.returncode == 0:
         itunes_lookup = _get_itunes_info(bundle_id)
         _add_ipa_to_library(
@@ -41,5 +45,6 @@ def download_ipa(bundle_id: str) -> bool:
         )
 
         return True
+
     else:
         raise Exception("Failed to download IPA")
