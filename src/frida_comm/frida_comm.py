@@ -379,15 +379,6 @@ def _run_ipa_decrypt(
 
         _create_dir(PAYLOAD_PATH)
 
-        # Use Activator to hit the Home button once to turn device on
-        SSH_SESSION.exec_command(
-            "activator send libactivator.system.homebutton"
-        )
-        # Then kill all apps by triggering libactivator.system.clear-switcher
-        SSH_SESSION.exec_command(
-            "activator send libactivator.system.clear-switcher"
-        )
-
         (session, display_name, bundle_identifier) = _open_target_app(
             device, name_or_bundleid
         )
