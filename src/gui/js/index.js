@@ -63,14 +63,17 @@ function updateIPA(id) {
             // Success!
             var library = JSON.parse(req.responseText);
             console.log(library);
+            alert('Job submitted!')
         } else {
             // We reached our target server, but it returned an error
             console.log('Error');
+            alert('Error submitting job!')
         }
     }
     req.onerror = function () {
         // There was a connection error of some sort
         console.log('Connection error');
+        alert('Error submitting job!')
     }
     req.send();
 }
@@ -89,14 +92,17 @@ function decryptIPA(id) {
             // Success!
             var library = JSON.parse(req.responseText);
             console.log(library);
+            alert('Job submitted!')
         } else {
             // We reached our target server, but it returned an error
             console.log('Error');
+            alert('Error submitting job!')
         }
     }
     req.onerror = function () {
         // There was a connection error of some sort
         console.log('Connection error');
+        alert('Error submitting job!')
     }
     req.send(JSON.stringify(request_body));
 }
@@ -141,7 +147,7 @@ searchModal.addEventListener('show.bs.modal', function (event) {
                 update_button.setAttribute('class', 'btn btn-primary bg-dark');
                 update_button.setAttribute('style', 'margin: 5px;');
                 update_button.setAttribute('type', 'button');
-                update_button.setAttribute('onclick', 'updateIPA(' + apps_result[i].id + ')');
+                update_button.setAttribute('onclick', 'updateIPA("' + apps_result[i].bundleID + '")');
                 update_button.innerHTML = '<i class="bi bi-download"></i>';
                 update_button.setAttribute('title', '(Re)Download IPA');
 
@@ -149,7 +155,7 @@ searchModal.addEventListener('show.bs.modal', function (event) {
                 decrypt_button.setAttribute('class', 'btn btn-primary bg-dark');
                 decrypt_button.setAttribute('style', 'margin: 5px;');
                 decrypt_button.setAttribute('type', 'button');
-                decrypt_button.setAttribute('onclick', 'decryptIPA(' + apps_result[i].id + ')');
+                decrypt_button.setAttribute('onclick', 'decryptIPA("' + apps_result[i].bundleID + '")');
                 decrypt_button.innerHTML = '<i class="bi bi-unlock"></i>';
                 decrypt_button.setAttribute('title', 'Decrypt IPA');
 
