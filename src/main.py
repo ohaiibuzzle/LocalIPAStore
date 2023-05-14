@@ -24,6 +24,8 @@ def start_fastapi_server():
         StaticFiles(directory=DECRYPTED_IPA_DIR),
         name="decrypted_ipa",
     )
+    # mount the GUI
+    app.mount("/ui", StaticFiles(directory="src/gui"), name="ui")
     uvicorn.run(app, host="localhost", port=8000)
     pass
 

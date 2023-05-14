@@ -6,7 +6,7 @@ import ipatool_comm
 ipa_router = APIRouter()
 
 
-@ipa_router.post("/ipa/search")
+@ipa_router.get("/ipa/search")
 def _search_ipa(query: str) -> IPAToolAppSearch:
     """Search for an app in the App Store"""
     return ipatool_comm.search_ipa(query)
