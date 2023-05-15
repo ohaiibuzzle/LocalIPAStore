@@ -440,7 +440,12 @@ def run_ipa_decrypt(
     query1 = SqliteSingleton.getInstance().execute(q1, (bundle_id,))
     result = query1.fetchone()
     if result is None:
-        download_ipa(bundle_id)
+        try:
+            download_ipa(bundle_id)
+        except Exception as e:
+            print(e)
+            TASKS.remove("Decrypting {}".format(bundle_id))
+            return
         target = f"{IPA_DIR}/{bundle_id}.ipa"
     else:
         target = result[4]
@@ -450,10 +455,14 @@ def run_ipa_decrypt(
     result = query1.fetchone()
 
     output_ipa = f"{DECRYPTED_IPA_DIR}/{bundle_id}.ipa"
-
-    install_ipa(target)
-    _run_ipa_decrypt(bundle_id, output_ipa, blacklisted_dirs, ssh_params)
-    uninstall_ipa(bundle_id)
+    try:
+        install_ipa(target)
+        _run_ipa_decrypt(bundle_id, output_ipa, blacklisted_dirs, ssh_params)
+        uninstall_ipa(bundle_id)
+    except Exception as e:
+        print(e)
+        TASKS.remove("Decrypting {}".format(bundle_id))
+        return
 
     q2 = """
     INSERT INTO DecryptedIPALibrary (id, bundle_id, name, version, decrypted_ipa_path)

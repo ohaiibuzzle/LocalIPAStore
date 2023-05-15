@@ -1,3 +1,47 @@
+function createActionButtons(bundleID) {
+    var actions = document.createElement('td');
+    actions.setAttribute('style', 'flex-direction: row; display: flex;');
+
+    var update_button = document.createElement('button');
+    update_button.setAttribute('class', 'btn btn-primary bg-dark');
+    update_button.setAttribute('style', 'margin: 5px;');
+    update_button.setAttribute('type', 'button');
+    update_button.setAttribute('onclick', 'updateIPA("' + bundleID + '")');
+    update_button.innerHTML = '<i class="bi bi-download"></i>';
+    update_button.setAttribute('title', '(Re)Download IPA');
+
+    var decrypt_button = document.createElement('button');
+    decrypt_button.setAttribute('class', 'btn btn-primary bg-dark');
+    decrypt_button.setAttribute('style', 'margin: 5px;');
+    decrypt_button.setAttribute('type', 'button');
+    decrypt_button.setAttribute('onclick', 'decryptIPA("' + bundleID + '")');
+    decrypt_button.innerHTML = '<i class="bi bi-unlock"></i>';
+    decrypt_button.setAttribute('title', 'Decrypt IPA');
+
+    var delete_ipa_button = document.createElement('button');
+    delete_ipa_button.setAttribute('class', 'btn btn-primary bg-dark');
+    delete_ipa_button.setAttribute('style', 'margin: 5px;');
+    delete_ipa_button.setAttribute('type', 'button');
+    delete_ipa_button.setAttribute('onclick', 'deleteIPA("' + bundleID + '")');
+    delete_ipa_button.innerHTML = '<i class="bi bi-file-earmark-lock-fill"></i>';
+    delete_ipa_button.setAttribute('title', 'Delete IPA');
+
+    var delete_decrypted_button = document.createElement('button');
+    delete_decrypted_button.setAttribute('class', 'btn btn-primary bg-dark');
+    delete_decrypted_button.setAttribute('style', 'margin: 5px;');
+    delete_decrypted_button.setAttribute('type', 'button');
+    delete_decrypted_button.setAttribute('onclick', 'deleteDecrypted("' + bundleID + '")');
+    delete_decrypted_button.innerHTML = '<i class="bi bi-file-earmark-excel"></i>';
+    delete_decrypted_button.setAttribute('title', 'Delete Decrypted IPA');
+
+    actions.appendChild(update_button);
+    actions.appendChild(decrypt_button);
+    actions.appendChild(delete_ipa_button);
+    actions.appendChild(delete_decrypted_button);
+    return actions;
+}
+
+
 window.onload = function () {
     // Get the library_table table in the document
     var libraryTable = document.getElementById('library_table');
@@ -15,31 +59,12 @@ window.onload = function () {
                 var name = row.insertCell(0);
                 var bundleID = row.insertCell(1);
                 var version = row.insertCell(2);
-
-                var actions = row.insertCell(3);
-                actions.setAttribute('style', 'flex-direction: row; display: flex;');
-
-                var update_button = document.createElement('button');
-                update_button.setAttribute('class', 'btn btn-primary bg-dark');
-                update_button.setAttribute('style', 'margin: 5px;');
-                update_button.setAttribute('type', 'button');
-                update_button.setAttribute('onclick', 'updateIPA("' + library[i].bundleID + '")');
-                update_button.innerHTML = '<i class="bi bi-download"></i>';
-                update_button.setAttribute('title', '(Re)Download IPA');
-
-                var decrypt_button = document.createElement('button');
-                decrypt_button.setAttribute('class', 'btn btn-primary bg-dark');
-                decrypt_button.setAttribute('style', 'margin: 5px;');
-                decrypt_button.setAttribute('type', 'button');
-                decrypt_button.setAttribute('onclick', 'decryptIPA("' + library[i].bundleID + '")');
-                decrypt_button.innerHTML = '<i class="bi bi-unlock"></i>';
-                decrypt_button.setAttribute('title', 'Decrypt IPA');
+                var actions = row.insertCell(3);    
 
                 name.innerHTML = library[i].name;
                 bundleID.innerHTML = library[i].bundleID;
                 version.innerHTML = library[i].version;
-                actions.appendChild(update_button);
-                actions.appendChild(decrypt_button);
+                actions.appendChild(createActionButtons(library[i].bundleID));
             }
 
         } else {
@@ -64,16 +89,19 @@ function updateIPA(id) {
             var library = JSON.parse(req.responseText);
             console.log(library);
             alert('Job submitted!')
+            location.reload();
         } else {
             // We reached our target server, but it returned an error
             console.log('Error');
             alert('Error submitting job!')
+            location.reload();
         }
     }
     req.onerror = function () {
         // There was a connection error of some sort
         console.log('Connection error');
         alert('Error submitting job!')
+        location.reload();
     }
     req.send();
 }
@@ -86,8 +114,8 @@ function decryptIPA(id) {
     }
 
     // Popup and ask the user for the blacklist
-    var blacklist = prompt('Path to skip enumeration during decryption:');
-    if (blacklist != null) {
+    var blacklist = prompt('Path to skip enumeration during decryption (comma separated, cancel for none):');
+    if (blacklist != null && blacklist != '') {
         request_body['blacklist'] = blacklist.split(',');
     }
 
@@ -101,18 +129,75 @@ function decryptIPA(id) {
             var library = JSON.parse(req.responseText);
             console.log(library);
             alert('Job submitted!')
+            location.reload();
         } else {
             // We reached our target server, but it returned an error
             console.log('Error');
             alert('Error submitting job!')
+            location.reload();
         }
     }
     req.onerror = function () {
         // There was a connection error of some sort
         console.log('Connection error');
         alert('Error submitting job!')
+        location.reload();
     }
     req.send(JSON.stringify(request_body));
+}
+
+function deleteIPA(id) {
+    // Call /ipa/delete?bundle_id=...
+    var req = new XMLHttpRequest();
+    req.open('POST', '/ipa/delete?bundle_id=' + id, true);
+    req.onload = function () {
+        if (req.status >= 200 && req.status < 400) {
+            // Success!
+            var library = JSON.parse(req.responseText);
+            console.log(library);
+            alert('IPA deleted!')
+            location.reload();
+        } else {
+            // We reached our target server, but it returned an error
+            console.log('Error');
+            alert('Error deleting IPA!')
+            location.reload();
+        }
+    }
+    req.onerror = function () {
+        // There was a connection error of some sort
+        console.log('Connection error');
+        alert('Error deleting IPA!')
+        location.reload();
+    }
+    req.send();
+}
+
+function deleteDecrypted(id) {
+    // Call /ipa/delete_decrypted?bundle_id=...
+    var req = new XMLHttpRequest();
+    req.open('POST', '/ipa/delete_decrypted?bundle_id=' + id, true);
+    req.onload = function () {
+        if (req.status >= 200 && req.status < 400) {
+            // Success!
+            var library = JSON.parse(req.responseText);
+            console.log(library);
+            alert('Decrypted IPA deleted!')
+            location.reload();
+        } else {
+            // We reached our target server, but it returned an error
+            console.log('Error');
+            alert('Error deleting decrypted IPA!')
+            location.reload();
+        }
+    }
+    req.onerror = function () {
+        // There was a connection error of some sort
+        console.log('Connection error');
+        alert('Error deleting decrypted IPA!')
+        location.reload();
+    }
+    req.send();
 }
 
 function clearModalTable() {
@@ -149,29 +234,12 @@ searchModal.addEventListener('show.bs.modal', function (event) {
                 var version = row.insertCell(2);
 
                 var actions = row.insertCell(3);
-                actions.setAttribute('style', 'flex-direction: row; display: flex;');
 
-                var update_button = document.createElement('button');
-                update_button.setAttribute('class', 'btn btn-primary bg-dark');
-                update_button.setAttribute('style', 'margin: 5px;');
-                update_button.setAttribute('type', 'button');
-                update_button.setAttribute('onclick', 'updateIPA("' + apps_result[i].bundleID + '")');
-                update_button.innerHTML = '<i class="bi bi-download"></i>';
-                update_button.setAttribute('title', '(Re)Download IPA');
-
-                var decrypt_button = document.createElement('button');
-                decrypt_button.setAttribute('class', 'btn btn-primary bg-dark');
-                decrypt_button.setAttribute('style', 'margin: 5px;');
-                decrypt_button.setAttribute('type', 'button');
-                decrypt_button.setAttribute('onclick', 'decryptIPA("' + apps_result[i].bundleID + '")');
-                decrypt_button.innerHTML = '<i class="bi bi-unlock"></i>';
-                decrypt_button.setAttribute('title', 'Decrypt IPA');
 
                 name.innerHTML = apps_result[i].name;
                 bundleID.innerHTML = apps_result[i].bundleID;
                 version.innerHTML = apps_result[i].version;
-                actions.appendChild(update_button);
-                actions.appendChild(decrypt_button);
+                actions.appendChild(createActionButtons(apps_result[i].bundleID));
 
                 // Add content to the table
                 table.appendChild(row);
@@ -189,6 +257,18 @@ searchModal.addEventListener('show.bs.modal', function (event) {
 });
 
 
-document.getElementById('search-modal').addEventListener('hidden.bs.modal', function (event) {
+searchModal.addEventListener('hidden.bs.modal', function (event) {
     clearModalTable();
+});
+
+const runningJobsModal = document.getElementById('running-jobs-modal');
+
+runningJobsModal.addEventListener('show.bs.modal', function (event) {
+    let runningJobsIf = document.getElementById('running-jobs-if');
+    runningJobsIf.src = 'running_jobs.html'
+});
+
+runningJobsModal.addEventListener('hidden.bs.modal', function (event) {
+    let runningJobsIf = document.getElementById('running-jobs-if');
+    runningJobsIf.src = ''
 });

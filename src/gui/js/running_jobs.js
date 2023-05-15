@@ -24,6 +24,11 @@ window.onload = function () {
 
     // refresh the entire page every 5 seconds
     setInterval(function () {
+        // Stop if the iframe is not visible
+        if (document.getElementById('running_jobs').style.display == 'none') {
+            return;
+        }
+
         window.location.reload();
     }, 5000);
 };
