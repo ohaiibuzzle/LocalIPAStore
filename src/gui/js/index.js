@@ -84,6 +84,14 @@ function decryptIPA(id) {
         "bundle_id": id,
         "blacklist": []
     }
+
+    // Popup and ask the user for the blacklist
+    var blacklist = prompt('Path to skip enumeration during decryption:');
+    if (blacklist != null) {
+        request_body['blacklist'] = blacklist.split(',');
+    }
+
+
     var req = new XMLHttpRequest();
     req.open('POST', '/decrypt', true);
     req.setRequestHeader('Content-Type', 'application/json');
